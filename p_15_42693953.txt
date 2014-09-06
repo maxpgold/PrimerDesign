@@ -1,0 +1,4 @@
+SEQUENCE_ID=p_15_42693953
+SEQUENCE_TEMPLATE=
+PRIMER_THERMODYNAMIC_PARAMETERS_PATH=/Users/maxgold/tools/primer3-release-2.3.6/primer3_config/
+=

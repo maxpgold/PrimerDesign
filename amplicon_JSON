@@ -1,4 +1,4 @@
-#Ruby
+#Primer Designer for JSON
 
 chr = ARGV[0]
 snp = ARGV[1]
@@ -55,10 +55,12 @@ primer3_output.each do |l|
 	primer3_hash[k] = v
 end
 
+#puts primer3_hash
+
 #parse primer3_hash to primer_hash (which stores only 'name => sequence' at this point) 
 primer_hash = {}
 (0..4).each do |i|
-	primer_hash["#{chr}_#{snp}_#{i}_F"] = primer3_hash["PRIMER_LEFT_#{i}_SEQUENCE"]
+	primer_hash["#{chr}_#{snp}_#{i}_F"] = primer3_hash["PRIMER_LEFT_#{i}_SEQUENCE"] 
 	primer_hash["#{chr}_#{snp}_#{i}_R"] = primer3_hash["PRIMER_RIGHT_#{i}_SEQUENCE"]
 end
 
@@ -81,10 +83,55 @@ primer_hash.each do |header,sequence|
 	puts [header,sequence,synthesis_scale,synthesis_purification].join(",")+"\n"
 end
 
+# JSON_array = []
+# (0..4).each do |i|
+# 	JSON_hash = {}
+# 	JSON_hash["Forward_primer_#{i}"] = primer3_hash["PRIMER_LEFT_#{i}_SEQUENCE"]
+# 	JSON_hash["Forward_primer_#{i}_TM"] = primer3_hash["PRIMER_LEFT_#{i}_TM"]
+# 	JSON_hash["Reverse_primer_#{i}"] = primer3_hash["PRIMER_RIGHT_#{i}_SEQUENCE"]
+# 	JSON_hash["Reverse_primer_#{i}_TM"] = primer3_hash["PRIMER_RIGHT_#{i}_TM"]
+# 	JSON_array.push(JSON_hash)
+# end
+# puts JSON_array
+
+
+JSON_ouput_hash = {}
+(0..4).each do |i|
+	JSON_hash = {}
+	JSON_hash["forward_primer_sequence"] = primer3_hash["PRIMER_LEFT_#{i}_SEQUENCE"]
+	JSON_hash["forward_primer_tm"] = primer3_hash["PRIMER_LEFT_#{i}_TM"]
+	JSON_hash["reverse_primer_sequence"] = primer3_hash["PRIMER_RIGHT_#{i}_SEQUENCE"]
+	JSON_hash["reverse_primer__tm"] = primer3_hash["PRIMER_RIGHT_#{i}_TM"]
+	JSON_hash["amplicon_size"] = primer3_hash["PRIMER_PAIR_#{i}_PRODUCT_SIZE"]
+	JSON_ouput_hash["amplicon_#{i}"] = JSON_hash
+end
+puts JSON_ouput_hash
+
+
+
+
+# JSON_hash = {}
+# (0..4).each do |i|
+# 	JSON_hash["Primer_#{i}_hash" = ["Forward_primer_#{i}"] = primer3_hash["PRIMER_LEFT_#{i}_SEQUENCE"]
+# 								   ["Forward_primer_#{i}_TM"] = primer3_hash["PRIMER_LEFT_#{i}_TM"]
+# 								   ["Reverse_primer_#{i}"] = primer3_hash["PRIMER_RIGHT_#{i}_SEQUENCE"]
+# 	                               ["Reverse_primer_#{i}_TM"] = primer3_hash["PRIMER_RIGHT_#{i}_TM"]]
+# end
+# puts "JSON Hash: \n"
+# puts JSON_hash
+
+	
+
+# JSON_array = []
+# (0..4).each do |i|
+
+
+# JSON_array = []
+# 	(0..4).each do |i|
+
+
 
 #give out all primer pairs
-#build hash, fp, rp, tm, amplicon length (outside edge of fp to outside edge of rp)
+#build hash, fp, rp, tm, amplicon length (outside edge of fp to outside edge of rp) (#Primer_pair_product_size)
 #keep track of genomic length 
 #build array of those 5
-
-

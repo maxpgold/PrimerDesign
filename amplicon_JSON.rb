@@ -1,4 +1,4 @@
-#Ruby
+#Primer Designer for JSON
 
 chr = ARGV[0]
 snp = ARGV[1]
@@ -55,36 +55,27 @@ primer3_output.each do |l|
 	primer3_hash[k] = v
 end
 
+
+
 #parse primer3_hash to primer_hash (which stores only 'name => sequence' at this point) 
 primer_hash = {}
 (0..4).each do |i|
-	primer_hash["#{chr}_#{snp}_#{i}_F"] = primer3_hash["PRIMER_LEFT_#{i}_SEQUENCE"]
+	primer_hash["#{chr}_#{snp}_#{i}_F"] = primer3_hash["PRIMER_LEFT_#{i}_SEQUENCE"] 
 	primer_hash["#{chr}_#{snp}_#{i}_R"] = primer3_hash["PRIMER_RIGHT_#{i}_SEQUENCE"]
 end
 
-#check primer_hash composition
-puts "Primer Hash: \n"
-puts primer_hash 
 
-#print fasta format: 
-puts "\nFasta Format: \n\n"
-primer_hash.each do |header,sequence|
-	puts ">"+header
-	puts sequence
+#create JSON_output_hash which is the JSON_hash for the 5 amplicons
+JSON_ouput_hash = {}
+JSON_hash = {}
+(0..4).each do |i|
+	JSON_hash["forward_primer_sequence"] = primer3_hash["PRIMER_LEFT_#{i}_SEQUENCE"]
+	JSON_hash["forward_primer_tm"] = primer3_hash["PRIMER_LEFT_#{i}_TM"]
+	JSON_hash["reverse_primer_sequence"] = primer3_hash["PRIMER_RIGHT_#{i}_SEQUENCE"]
+	JSON_hash["reverse_primer__tm"] = primer3_hash["PRIMER_RIGHT_#{i}_TM"]
+	JSON_hash["amplicon_size"] = primer3_hash["PRIMER_PAIR_#{i}_PRODUCT_SIZE"]
+	JSON_ouput_hash["amplicon_#{i}"] = JSON_hash
 end
-
-#print sigma ordering format: 
-puts "\nSigma Bulk Order Format: \n\n"
-synthesis_scale=["0.025"]
-synthesis_purification=["DST"]
-primer_hash.each do |header,sequence|
-	puts [header,sequence,synthesis_scale,synthesis_purification].join(",")+"\n"
-end
-
-
-#give out all primer pairs
-#build hash, fp, rp, tm, amplicon length (outside edge of fp to outside edge of rp)
-#keep track of genomic length 
-#build array of those 5
+puts JSON_ouput_hash
 
 
