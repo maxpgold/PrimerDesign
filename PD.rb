@@ -1,5 +1,3 @@
-#Ruby
-
 chr = ARGV[0]
 snp = ARGV[1]
 unless ARGV[1]
@@ -32,7 +30,6 @@ config["PRIMER_THERMODYNAMIC_PARAMETERS_PATH"] = File.expand_path('~') + "/tools
 config["SEQUENCE_TARGET"] = "950,100"          #what should be the target sequence (target base, length of target
 config["PRIMER_PRODUCT_SIZE_RANGE"] = "350-650"
 config["PRIMER_PRODUCT_OPT_SIZE"] = "500"
-# config["PRIMER_TASK"] = "pick_discriminative_primers"   #what should the word be
 
 #write primer3_core inputs to tmp file
 primer3_input_file_handle = "p_#{chr}_#{snp}.txt"
@@ -56,7 +53,6 @@ primer3_output.each do |l|
 	k,v = l.split("=")
 	primer3_hash[k] = v
 end
-puts primer3_hash
 
 #parse primer3_hash to primer_hash (which stores only 'name => sequence' at this point) 
 primer_hash = {}
@@ -83,11 +79,3 @@ synthesis_purification=["DST"]
 primer_hash.each do |header,sequence|
 	puts [header,sequence,synthesis_scale,synthesis_purification].join(",")+"\n"
 end
-
-
-#give out all primer pairs
-#build hash, fp, rp, tm, amplicon length (outside edge of fp to outside edge of rp)
-#keep track of genomic length 
-#build array of those 5
-
-

@@ -29,8 +29,9 @@ config = {}
 config["SEQUENCE_ID"] = "p_#{chr}_#{snp}" 
 config["SEQUENCE_TEMPLATE"] = template_seq.upcase
 config["PRIMER_THERMODYNAMIC_PARAMETERS_PATH"] = File.expand_path('~') + "/tools/primer3-release-2.3.6/primer3_config/"
-# config["SEQUENCE_TARGET"] = 1000           #what should be the target sequence (target base, length of target)
-# config["PRIMER_TASK"] = "pick_discriminative_primers"   #what should the word be
+config["SEQUENCE_TARGET"] = "950,100"          #what should be the target sequence (target base, length of target
+config["PRIMER_PRODUCT_SIZE_RANGE"] = "350-650"
+config["PRIMER_PRODUCT_OPT_SIZE"] = "500"
 
 #write primer3_core inputs to tmp file
 primer3_input_file_handle = "p_#{chr}_#{snp}.txt"
@@ -40,6 +41,7 @@ config.each do |k,v|
 end
 primer3_input_file.write("=\n")
 primer3_input_file.close 
+
 
 #execute primer3_core with input file
 p3_command = "~/tools/primer3-release-2.3.6/primer3_core #{primer3_input_file_handle}"
@@ -55,7 +57,7 @@ primer3_output.each do |l|
 	primer3_hash[k] = v
 end
 
-
+puts primer3_hash
 
 #parse primer3_hash to primer_hash (which stores only 'name => sequence' at this point) 
 primer_hash = {}
@@ -64,18 +66,35 @@ primer_hash = {}
 	primer_hash["#{chr}_#{snp}_#{i}_R"] = primer3_hash["PRIMER_RIGHT_#{i}_SEQUENCE"]
 end
 
+# puts "Primer Hash: \n"
+# puts primer_hash 
+
+puts "JSON output
+
+"
+
 
 #create JSON_output_hash which is the JSON_hash for the 5 amplicons
 JSON_ouput_hash = {}
-JSON_hash = {}
 (0..4).each do |i|
+	JSON_hash = {}
+	JSON_hash.clear
+	coords_f = primer3_hash["PRIMER_LEFT_#{i}"].split(",").map{|e| e.to_i}
+	coords_r = primer3_hash["PRIMER_RIGHT_#{i}"].split(",").map{|e| e.to_i}
 	JSON_hash["forward_primer_sequence"] = primer3_hash["PRIMER_LEFT_#{i}_SEQUENCE"]
 	JSON_hash["forward_primer_tm"] = primer3_hash["PRIMER_LEFT_#{i}_TM"]
 	JSON_hash["reverse_primer_sequence"] = primer3_hash["PRIMER_RIGHT_#{i}_SEQUENCE"]
-	JSON_hash["reverse_primer__tm"] = primer3_hash["PRIMER_RIGHT_#{i}_TM"]
+	JSON_hash["reverse_primer_tm"] = primer3_hash["PRIMER_RIGHT_#{i}_TM"]
 	JSON_hash["amplicon_size"] = primer3_hash["PRIMER_PAIR_#{i}_PRODUCT_SIZE"]
+	JSON_hash["forward_primer_start"] = coords_f[0]
+	JSON_hash["forward_primer_end"] = coords_f.inject(:+)
+	JSON_hash["reverse_primer_start"] = coords_r[0]
+	JSON_hash["reverse_primer_end"] = coords_r.inject(:+)
 	JSON_ouput_hash["amplicon_#{i}"] = JSON_hash
 end
+puts JSON_hash
+
+puts "JSON_ouput_hash"
 puts JSON_ouput_hash
 
 
